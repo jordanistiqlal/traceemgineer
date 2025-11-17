@@ -17,7 +17,7 @@ class UsersTableSeeder extends Seeder
     {
         DB::table('users')->insert([
             [
-                'user_id' => '6274dba062004b37886482acf460aa14',
+                'user_id' => 'ADMKIE07',
                 'name' => 'admin',
                 'username' => 'admin',
                 'role' => 'ADMIN',

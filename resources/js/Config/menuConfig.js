@@ -25,6 +25,7 @@ export const Menu = [
             { icon: "⦁", name: "User", path: "/masterdata/user" },
             { icon: "⦁", name: "Project", path: "/masterdata/project" },
             { icon: "⦁", name: "Ticket", path: "/masterdata/ticket" },
+            { icon: "⦁", name: "Task", path: "/masterdata/task" },
         ],
     },
 ];

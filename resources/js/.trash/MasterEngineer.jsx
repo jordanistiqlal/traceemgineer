@@ -53,14 +53,14 @@ export default function Project({errors}){
                 <form onSubmit={handleSubmit} id="form" className="p-4">
                     <div className="p-2">
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-                        <input type="name" name="name" id="name" placeholder="Joko W." className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.name} onChange={(e) => setData('name', e.target.value)}/>
+                        <input type="name" name="name" id="name" placeholder="John Doe" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.name} onChange={(e) => setData('name', e.target.value)}/>
 
                         {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
                     </div>
 
                     <div className="p-2">
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" name="email" id="email" placeholder="jowikododo45@gmail.com" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.email} onChange={(e) => setData('email', e.target.value)}/>
+                        <input type="email" name="email" id="email" placeholder="johndoe@gmail.com" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.email} onChange={(e) => setData('email', e.target.value)}/>
 
                         {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
                     </div>

@@ -4,7 +4,7 @@ import Table from '@/Components/Table';
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { formatPhone } from '@/Utils/Function';
-import Swal from 'sweetalert2';
+import { handleRequestSubmit, handleRequestDelete } from '@/Utils/Request';
 
 const RoleOptions = [
     { value: 'ENGINEER', label: 'ENGINEER' },
@@ -62,66 +62,7 @@ export default function User({response = []}){
 
     const handleSubmit = (e) =>{
         e.preventDefault()
-
-        try {
-            if(!data.id){ // Create New User
-                post(route('user.store'), {
-                    onSuccess: () =>{
-                        Swal.fire({
-                            title: "Created Succesfully",
-                            icon: "success",
-                            draggable: true
-                        });
-
-                        reset()
-                    },
-                    onError: (errors) =>{
-                        const errorMessages = Object.values(errors).flat().join('\n');
-                        
-                        Swal.fire({
-                            text: errorMessages,
-                            icon: "error",
-                            title: "Oops...",
-                            confirmButtonText: 'Close'
-                        })
-
-                        reset('password')
-                    }
-                })
-            }else{ // Update Existing User
-                put(route('user.update', data.id), {
-                    onSuccess: () =>{
-                        Swal.fire({
-                            title: "Updated Succesfully",
-                            icon: "success",
-                            draggable: true
-                        });
-
-                        reset()
-
-                        ToogleForm();
-                    },
-                    onError: (errors) =>{
-                        const errorMessages = Object.values(errors).flat().join('\n');
-                        
-                        Swal.fire({
-                            text: errorMessages,
-                            icon: "error",
-                            title: "Oops...",
-                            confirmButtonText: 'Close'
-                        })
-
-                        reset('password')
-                    }
-                })
-            }
-        } catch (error) {
-            Swal.fire({
-                text: error,
-                icon: "error",
-                title: "Oops...",
-            })
-        }
+        handleRequestSubmit(e, data, post, put, reset, 'user', ToogleForm);
     }
 
     const onEdit = (e) => {
@@ -143,37 +84,7 @@ export default function User({response = []}){
     }
 
     const onDelete = (id) => {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                destroy(route('user.destroy', id), {
-                    onSuccess: () =>{
-                        Swal.fire({
-                            title: "Deleted Succesfully",
-                            icon: "success",
-                            draggable: true
-                        });
-                    },
-                    onError: (errors) =>{
-                        const errorMessages = Object.values(errors).flat().join('\n');
-                        
-                        Swal.fire({
-                            text: errorMessages,
-                            icon: "error",
-                            title: "Oops...",
-                            confirmButtonText: 'Close'
-                        })
-                    }
-                });
-            }
-        });
+        handleRequestDelete(id, destroy, 'user');
     }
 
     const ToogleForm = () => {
@@ -245,7 +156,7 @@ export default function User({response = []}){
                             <div className="p-2">
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
                                 <div className="flex-1 flex flex-col">
-                                    <input type="name" name="name" id="name" placeholder="Joko W." className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.name} onChange={(e) => setData('name', e.target.value)}/>
+                                    <input type="name" name="name" id="name" placeholder="John Doe" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.name} onChange={(e) => setData('name', e.target.value)}/>
 
                                     {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
                                 </div>
@@ -263,7 +174,7 @@ export default function User({response = []}){
                             <div className="p-2">
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
                                 <div className="flex-1 flex flex-col">
-                                    <input type="email" name="email" id="email" placeholder="jowikododo45@gmail.com" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.email} onChange={(e) => setData('email', e.target.value)}/>
+                                    <input type="email" name="email" id="email" placeholder="johndoe@gmail.com" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.email} onChange={(e) => setData('email', e.target.value)}/>
 
                                     {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
                                 </div>

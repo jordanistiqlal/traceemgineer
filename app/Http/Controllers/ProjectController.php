@@ -2,33 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Services\AuthService;
+use App\Services\ProjectService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class UserController extends Controller
+class ProjectController extends Controller
 {
+    protected $ProjectService;
     protected $UserService;
-    protected $AuthService;
-    public function __construct(
-        UserService $UserService, 
-        AuthService $AuthService, 
-    ) {
-        $this->UserService = $UserService;
-        $this->AuthService = $AuthService;
-    }
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request) : Response
-    {
-        $response = $this->UserService->index($request);
+    protected $TaskService;
+    protected $TicketService;
 
-        return Inertia::render('Master/User', [
-            'response' => $response
+    public function __construct(
+        ProjectService $ProjectService, 
+        UserService $UserService, 
+    ) {
+        $this->ProjectService = $ProjectService;
+        $this->UserService = $UserService;
+    }
+
+    public function index(Request $request): Response
+    {
+        $response = $this->ProjectService->index($request);
+        $user = $this->UserService->index((clone $request)->merge(['role' => 'ENGINEER']));
+        $engineers = $user->map(function ($item) {
+            return ['value' => $item->user_id, 'label' => $item->username];
+        });
+        
+
+        return Inertia::render('Master/Project', [
+            'response' => [
+                'data' => $response,
+                'engineers' => $engineers,
+                'tasks' => [],
+                'tickets' => [],
+            ],
         ]);
     }
 
@@ -45,12 +55,11 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $result = $this->AuthService->register($request);
+        $result = $this->ProjectService->store($request);
         
         if ($result[0] === 'Success') {
             return back()->with('success', $result[1]);
         }
-
         return back()->withErrors($result[1]);
     }
 
@@ -75,7 +84,7 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $result = $this->UserService->update($request, $id);
+        $result = $this->ProjectService->update($request, $id);
         
         if ($result[0] === 'Success') {
             return back()->with('success', $result[1]);
@@ -89,12 +98,12 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $result = $this->UserService->destroy($id);
-
+        $result = $this->ProjectService->destroy($id);
+        
         if ($result[0] === 'Success') {
             return back()->with('success', $result[1]);
-        } 
-        
+        }
+
         return back()->withErrors($result[1]);
     }
 }

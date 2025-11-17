@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EngineerController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
+use App\Models\Project;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -31,11 +33,16 @@ Route::middleware('auth:sanctum','verified')->prefix('')->group(function () {
     // Master Data
     Route::prefix('masterdata')->group(function () {
         Route::resource('/user', UserController::class);
-        Route::get('/project', function () {return Inertia::render('Master/Project');});
+        Route::resource('/project', ProjectController::class);
         Route::get('/ticket', function () {return Inertia::render('Master/Ticket');});
+        Route::get('/task', function () {return Inertia::render('Master/Task');});
     });
 });
 
 
-
+Route::prefix('api')->group(function () {
+    Route::post('/login', [AuthController::class, 'jwt_login']);
+    Route::post('/refresh-token', [AuthController::class, 'refresh_token']);
+    Route::post('/logout', [AuthController::class, 'logout_api']);
+});
 

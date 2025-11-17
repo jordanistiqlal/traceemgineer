@@ -24,14 +24,37 @@ const columnsTask = [
     { key: 'email', label: 'Email', sortable: true, searchable: true},
 ];
 
+const TipeOptions = [
+    { value: 'INSTALASI', label: 'INSTALASI' },
+    { value: 'MAINTENANCE', label: 'MAINTENANCE' }
+];
+
 const projectOptions = [
     { value: 'project1', label: 'Project 1' },
     { value: 'project2', label: 'Project 2' },
     { value: 'project3', label: 'Project 3' }
 ];
 
+const RoleOptions = [
+    { value: 'ENGINEER', label: 'ENGINEER'},
+    { value: 'ADMIN', label: 'ADMIN' }
+];
+
 export default function Engineer({response=[]}){
-    const {data, setData, post, processing, reset, errors, clearErrors } = useForm({ name:"", nohp:"", email:"", password:"", role: ""})
+    const {data, setData, post, processing, reset, errors, clearErrors } = useForm({
+        name:"",
+        nohp:"",
+        email:"",
+        password:"",
+        role: "ENGINEER"
+    })
+    const { data: taskData, setData: setTaskData, post: postTask, processing: processingTask, reset: resetTask, errors: taskErrors, clearErrors: clearTaskErrors} = useForm({
+        task_name:"",
+        type:"",
+        project:"",
+        engineer:""
+    });
+
     const [FormVisible, setFormVisible] = useState(false)
    
     const EngineerData = response?.engineers
@@ -58,8 +81,7 @@ export default function Engineer({response=[]}){
 
     const handleSubmitEngineer = (e) =>{
         e.preventDefault()
-        setData('role', 'ENGINEER');
-        
+       
         try {
             post(route('user.store'), {
                 onSuccess: () =>{
@@ -72,7 +94,7 @@ export default function Engineer({response=[]}){
                     reset()
                 },
                 onError: (errors) =>{
-                    const errorMessages = Object.values(errors).flat().join('\n');
+                    const errorMessages = typeof errors != 'object' ? errors : Object.values(errors).flat().join('\n');
                     
                     Swal.fire({
                         text: errorMessages,
@@ -92,12 +114,12 @@ export default function Engineer({response=[]}){
             })
         }
     }
+
     const handleSubmitTask = (e) =>{
         e.preventDefault()
         
         try {
-            setData('role', 'ENGINEER');
-            post(route('task.store'), {
+            postTask(route('task.store'), {
                 onSuccess: () =>{
                     Swal.fire({
                         title: "Created Succesfully",
@@ -105,10 +127,10 @@ export default function Engineer({response=[]}){
                         draggable: true
                     });
 
-                    reset()
+                    resetTask()
                 },
                 onError: (errors) =>{
-                    const errorMessages = Object.values(errors).flat().join('\n');
+                    const errorMessages = typeof errors != 'object' ? errors : Object.values(errors).flat().join('\n');
                     
                     Swal.fire({
                         text: errorMessages,
@@ -116,8 +138,6 @@ export default function Engineer({response=[]}){
                         title: "Oops...",
                         confirmButtonText: 'Close'
                     })
-
-                    reset('password')
                 }
             })
         } catch (error) {
@@ -135,10 +155,11 @@ export default function Engineer({response=[]}){
         if(hasErrors){
             setTimeout(() => {
                 clearErrors();
+                clearTaskErrors();
             }, 5000);
         }
         
-    }, [errors])
+    }, [errors, taskErrors])
 
     return(
         <>
@@ -200,7 +221,7 @@ export default function Engineer({response=[]}){
                     <div className="p-2 flex items-center"> 
                         <label htmlFor="name" className="w-55 text-sm font-medium text-gray-700" > Name </label> 
                         <div className="flex-1 flex flex-col">
-                            <input type="text" name="name" id="name" placeholder="Joko W." className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.name} onChange={(e) => setData('name', e.target.value)}/>
+                            <input type="text" name="name" id="name" placeholder="John Doe" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.name} onChange={(e) => setData('name', e.target.value)}/>
                             {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
                         </div>
                     </div>
@@ -218,7 +239,7 @@ export default function Engineer({response=[]}){
                         <label htmlFor="email" className="w-55 text-sm font-medium text-gray-700" > Email </label> 
 
                         <div className="flex-1 flex flex-col">
-                            <input type="email" name="email" id="email" placeholder="jowikododo45@gmail.com" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.email} onChange={(e) => setData('email', e.target.value)}/>
+                            <input type="email" name="email" id="email" placeholder="johndoe@gmail.com" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.email} onChange={(e) => setData('email', e.target.value)}/>
                             {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
                         </div>
                     </div>
@@ -253,21 +274,21 @@ export default function Engineer({response=[]}){
                 <form className='mt-10 w-[70%]'>
 
                     <div className="p-2 flex items-center"> 
-                        <label htmlFor="name" className="w-55 text-sm font-medium text-gray-700" > Nama Task </label> 
+                        <label htmlFor="task_name" className="w-55 text-sm font-medium text-gray-700" > Nama Task </label> 
                         <div className="flex-1 flex flex-col">
-                            <input type="text" name="name" id="name" placeholder="Project Name" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.name} onChange={(e) => setData('name', e.target.value)}/>
-                            {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
+                            <input type="text" name="task_name" id="task_name" placeholder="Task Name" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={taskData.task_name} onChange={(e) => setTaskData('task_name', e.target.value)}/>
+                            {taskErrors.task_name && <span className="text-red-500 text-sm">{taskErrors.task_name}</span>}
                         </div>
                     </div>
                     
                     {/* Task Input */}
                     <div className="p-2 flex items-center"> 
-                        <label htmlFor="name" className="w-55 text-sm font-medium text-gray-700" > Tipe Task </label> 
+                        <label htmlFor="type" className="w-55 text-sm font-medium text-gray-700" > Tipe Task </label> 
                         <div className="flex-1 flex flex-col">
                             <Select
-                                id="name" name="name" placeholder="Select Task"
-                                value={projectOptions.find(option => option.value === data.name)}
-                                onChange={(selectedOption) => setData('name', selectedOption?.value || '')}
+                                id="type" name="type" placeholder="Select Task"
+                                value={projectOptions.find(option => option.value === taskData.name)}
+                                onChange={(selectedOption) => setTaskData('type', selectedOption?.value || '')}
                                 options={projectOptions}
                                 className="flex-1"
                                 styles={{
@@ -279,18 +300,18 @@ export default function Engineer({response=[]}){
                                     })
                                 }}
                             />
-                            {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
+                            {taskErrors.type && <span className="text-red-500 text-sm">{taskErrors.type}</span>}
                         </div>
                     </div>
 
                     {/* Project Input */}
                     <div className="p-2 flex items-center"> 
-                        <label htmlFor="name" className="w-55 text-sm font-medium text-gray-700" > Project </label> 
+                        <label htmlFor="project" className="w-55 text-sm font-medium text-gray-700" > Project </label> 
                         <div className="flex-1 flex flex-col">
                             <Select
-                                id="name" name="name" placeholder="Select Project"
-                                value={projectOptions.find(option => option.value === data.name)}
-                                onChange={(selectedOption) => setData('name', selectedOption?.value || '')}
+                                id="project" name="project" placeholder="Select Project"
+                                value={projectOptions.find(option => option.value === taskData.project)}
+                                onChange={(selectedOption) => setTaskData('project', selectedOption?.value || '')}
                                 options={projectOptions}
                                 className="flex-1"
                                 styles={{
@@ -302,18 +323,18 @@ export default function Engineer({response=[]}){
                                     })
                                 }}
                             />
-                            {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
+                            {taskErrors.project && <span className="text-red-500 text-sm">{taskErrors.project}</span>}
                         </div>
                     </div>
                     
                     {/* Engineer Input */}
                     <div className="p-2 flex items-center"> 
-                        <label htmlFor="name" className="w-55 text-sm font-medium text-gray-700" > Engineer </label> 
+                        <label htmlFor="engineer" className="w-55 text-sm font-medium text-gray-700" > Engineer </label> 
                         <div className="flex-1 flex flex-col">
                             <Select
-                                id="name" name="name" placeholder="Select Engineer"
-                                value={projectOptions.find(option => option.value === data.name)}
-                                onChange={(selectedOption) => setData('name', selectedOption?.value || '')}
+                                id="engineer" name="engineer" placeholder="Select Engineer"
+                                value={projectOptions.find(option => option.value === taskData.engineer)}
+                                onChange={(selectedOption) => setTaskData('engineer', selectedOption?.value || '')}
                                 options={projectOptions}
                                 className="flex-1"
                                 styles={{
@@ -325,13 +346,13 @@ export default function Engineer({response=[]}){
                                     })
                                 }}
                             />
-                            {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
+                            {taskErrors.engineer && <span className="text-red-500 text-sm">{taskErrors.engineer}</span>}
                         </div>
                     </div>
 
                     <button type="submit" onClick={handleSubmitTask} className="w-[10%] h-10 rounded-4xl text-xl font-extrabold transform hover:scale-103 transition-all ease-in-out duration-300 tracking-wider bg-[#9AB78F] text-white hover:bg-[#8BA67E] ring-4 hover:ring-green-100/50 hidden">
                         <span className="">
-                            {processing ? 'Loading...' : 'Add'}
+                            {processingTask ? 'Loading...' : 'Add'}
                         </span>
                     </button>
                 </form>

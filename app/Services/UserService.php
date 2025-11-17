@@ -6,6 +6,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -46,7 +47,6 @@ class UserService
         try {
             $request->validate([
                 'name'      => ['required','string','max:128'],
-                'username'  => ['required','string','max:128'],
                 'nohp'      => ['required','string','max:128','unique:users'],
                 'email'     => ['required','string','email','max:64','unique:users'],
                 'password'  => ['required','string'],
@@ -57,7 +57,7 @@ class UserService
             if (!$users){
                 $data = [
                     'name'      => $request->name,
-                    'username'  => $request->username,
+                    'username'  => Str::slug($request->username ?? $request->name),
                     'nohp'      => $request->nohp,
                     'email'     => $request->email,
                     'role'      => $request->role,

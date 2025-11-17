@@ -1,8 +1,8 @@
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, useForm } from "@inertiajs/react";
 import Table from '@/Components/Table';
-import Select from 'react-select';
 import { useEffect, useState } from 'react';
+import Select from 'react-select';
 import { handleRequestSubmit, handleRequestDelete } from '@/Utils/Request';
 
 const TipeOptions = [
@@ -16,21 +16,20 @@ const engineerOptions = [
     { value: 'engineer3', label: 'engineer 3' }
 ];
 
-export default function Project({response = []}) {
+export default function Task({response = []}){
     const columns = [
-        { key: 'number', label: 'No', sortable: false, searchable: false, render: (item, index) => index + 1, title: "Projects"},
-        { key: 'project_name', label: 'Nama Project', sortable: true, searchable: true},
-        { key: 'project_type', label: 'Tipe', sortable: true, searchable: true},
-        { key: 'engineer_id', label: 'Engineer', sortable: true, searchable: true},
-        { key: 'task_id', label: 'Task', sortable: true, searchable: true},
-        { key: 'ticket_id', label: 'Ticket', sortable: true, searchable: true},
+        { key: 'number', label: 'No', sortable: false, searchable: false, render: (item, index) => index + 1, title: "Tasks"},
+        { key: 'task_id', label: 'Id', sortable: true, searchable: true},
+        { key: 'task_type', label: 'Tipe', sortable: true, searchable: true},
+        { key: 'project_id', label: 'Project', sortable: true, searchable: true},
+        { key: 'user_id', label: 'Engineer', sortable: true, searchable: true},
         { key: 'action', label: 'Action', align: 'center', sortable: false, searchable: false,
             render: (item) => (
                 <div className="flex justify-center gap-2">
                     <button 
                         className="bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium px-3 py-1 rounded-lg transition h-10 w-10 inline-flex items-center justify-center cursor-pointer"
                         title="Edit"
-                        data-project={JSON.stringify(item)}
+                        data-task={JSON.stringify(item)}
                         onClick={(e) => onEdit(e)}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 640 640" fill="white">
@@ -40,7 +39,7 @@ export default function Project({response = []}) {
                     <button 
                         className="bg-red-500 hover:bg-red-600 text-white text-xs font-medium px-3 py-1 rounded-lg transition h-10 w-10 inline-flex items-center justify-center cursor-pointer"
                         title="Delete"
-                        onClick={() => onDelete(item.project_id)}
+                        onClick={() => onDelete(item.task_id)}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 640 640" fill="white">
                             <path d="M232.7 69.9C237.1 56.8 249.3 48 263.1 48L377 48C390.8 48 403 56.8 407.4 69.9L416 96L512 96C529.7 96 544 110.3 544 128C544 145.7 529.7 160 512 160L128 160C110.3 160 96 145.7 96 128C96 110.3 110.3 96 128 96L224 96L232.7 69.9zM128 208L512 208L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 208zM216 272C202.7 272 192 282.7 192 296L192 488C192 501.3 202.7 512 216 512C229.3 512 240 501.3 240 488L240 296C240 282.7 229.3 272 216 272zM320 272C306.7 272 296 282.7 296 296L296 488C296 501.3 306.7 512 320 512C333.3 512 344 501.3 344 488L344 296C344 282.7 333.3 272 320 272zM424 272C410.7 272 400 282.7 400 296L400 488C400 501.3 410.7 512 424 512C437.3 512 448 501.3 448 488L448 296C448 282.7 437.3 272 424 272z"/>
@@ -49,17 +48,19 @@ export default function Project({response = []}) {
                 </div>
         )}
     ]
+
     const {data, setData, post, put, delete: destroy, processing, reset, errors, clearErrors } = useForm({
         id:"",
         nama_project:"",
         tipe:"",
         engineer:"",
         task:"",
-        ticket:"",
+        task:"",
     })
     const [FormVisible, setFormVisible] = useState(false)
     const dataResponse = response.data || [];
     const engineers = response.engineers || [];
+
 
     const ToogleForm = () => {
         reset();
@@ -71,24 +72,29 @@ export default function Project({response = []}) {
 
     const handleSubmit = (e) =>{
         e.preventDefault()
-        handleRequestSubmit(e, data, post, put, reset, 'project', ToogleForm);
+        handleRequestSubmit(e, data, post, put, reset, 'task', ToogleForm);
     }
 
     const onEdit = (e) => {
         e.preventDefault()
         ToogleForm();
 
-        const response = (e.currentTarget.dataset.project) ? JSON.parse(e.currentTarget.dataset.project) : null;
+        const response = (e.currentTarget.dataset.task) ? JSON.parse(e.currentTarget.dataset.task) : null;
         if(!response) return;
         
         setData({
-            id: response.project_id || "",
+            id: response.task_id || "",
             name: response.name || "",
+            username: response.username || "",
+            email: response.email || "",
+            nohp: response.nohp || "",
+            password: "",
+            role: response.role || ""
         });
     }
 
     const onDelete = (id) => {
-        handleRequestDelete(id, destroy, 'project');
+        handleRequestDelete(id, destroy, 'task');
     }
 
     useEffect(() =>{
@@ -103,7 +109,7 @@ export default function Project({response = []}) {
     }, [errors])
     return(
         <>
-            <Head title='Project Data'></Head>
+            <Head title='Task Data'></Head>
             <div className={`${FormVisible ? 'hidden' : ''}`}>
                 <div className="flex justify-end w-full px-6 py-2">
                     <button type="submit" onClick={ToogleForm} className="w-[10%] h-11 rounded-4xl text-xl font-extrabold transform hover:scale-103 transition-all ease-in-out duration-300 tracking-wider bg-[#9AB78F] text-white hover:bg-[#8BA67E] ring-4 hover:ring-green-100/50">
@@ -114,7 +120,7 @@ export default function Project({response = []}) {
                 </div>
                 <div className="bg-white rounded-2xl shadow-xl border border-gray-800/20 p-6 overflow-x-auto">
                     <Table 
-                        data={dataResponse || []}
+                        data={response || []}
                         columns={columns}
                         search={true}
                         sort={true}
@@ -267,4 +273,4 @@ export default function Project({response = []}) {
     )
 }
 
-Project.layout = page => <MainLayout children={page} sidebarData={[]} />;
+Task.layout = page => <MainLayout children={page} sidebarData={[]} />;
