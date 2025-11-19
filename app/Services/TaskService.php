@@ -14,7 +14,8 @@ class TaskService
 {
     public function index($request)
     {
-        $query = Task::query();
+        // $query = Task::query();
+        $query = Task::with(['project:project_id,project_name', 'user:user_id,name,nohp,email']);
         
         if ($request->has('task_type') && !empty($request->task_type)) {
             $query->where('task_type', $request->task_type);
@@ -34,15 +35,15 @@ class TaskService
             $request->validate([
                 'name' => ['required','string','max:128'],
                 'tipe' => ['required','string','max:64'],
-                'project_id' => ['required','string'],
-                'user_id' => ['required','string'],
+                'project' => ['required','string'],
+                'engineer' => ['required','string'],
             ]);
 
             $data = [
                 'task_name' => $request->name,
                 'task_type' => $request->tipe,
-                'project_id' => $request->project_id,
-                'user_id' => $request->user_id,
+                'project_id' => $request->project,
+                'user_id' => $request->engineer,
             ];
 
             Task::create($data);
@@ -65,15 +66,15 @@ class TaskService
             $request->validate([
                 'name' => ['required','string','max:128'],
                 'tipe' => ['required','string','max:64'],
-                'project_id' => ['required','string'],
-                'user_id' => ['required','string'],
+                'project' => ['required','string'],
+                'engineer' => ['required','string'],
             ]);
     
             $update = [
                 'task_name' => $request->name,
                 'task_type' => $request->tipe,
-                'project_id' => $request->project_id,
-                'user_id' => $request->user_id,
+                'project_id' => $request->project,
+                'user_id' => $request->engineer,
             ];
     
             Task::where('task_id',$id)->update($update); 
@@ -93,7 +94,7 @@ class TaskService
     {
         DB::beginTransaction();
         try {
-            Task::where('ticket_id', $id)->delete();
+            Task::where('task_id', $id)->delete();
             DB::commit();
             return ['Success', 'Task Deleted'];
         } 

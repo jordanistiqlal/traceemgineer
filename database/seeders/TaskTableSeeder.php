@@ -17,7 +17,7 @@ class TaskTableSeeder extends Seeder
             [
                 'task_id' => 'eb31ce2a-31c5-4e08-a6fc-c4bab43e6ceb',
                 'task_name' => 'Task Alpha',
-                'task_type' => 'INSTLASI',
+                'task_type' => 'INSTALASI',
                 'project_id' => '38961e2e-a32c-4eee-9cb3-2dda2a1e1664',
                 'user_id' => 'ENGKDI33',
             ],
@@ -31,7 +31,7 @@ class TaskTableSeeder extends Seeder
             [
                 'task_id' => '05dab979-c311-4f4e-afe9-665a23e5b157',
                 'task_name' => 'Task Delta',
-                'task_type' => 'INSTLASI',
+                'task_type' => 'INSTALASI',
                 'project_id' => 'ad30fc4e-f3df-4949-9672-5761a2e1dd61',
                 'user_id' => 'ENGKIE07',
             ],

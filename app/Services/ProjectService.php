@@ -65,6 +65,19 @@ class ProjectService
         }
     }
 
+    public function show($id)
+    {
+        return Project::with([
+            'task' => function ($q) {
+                $q->select('task_id', 'project_id', 'user_id', 'task_name'); 
+            },
+            'task.user' => function ($q) {
+                $q->select('user_id', 'name', 'nohp', 'email');
+            }
+        ])
+        ->where('project_id', $id)->first();
+    }
+
     public function update($request, $id)
     {
         DB::beginTransaction();

@@ -7,6 +7,8 @@ import { formatPhone } from '@/Utils/Function';
 import Plus from '@/Components/Plus';
 import Select from 'react-select';
 
+import { Type } from '@/Config/typeConfig';
+
 const columnsEngineer = [
     { key: 'number', label: 'No', sortable: false, searchable: false, render: (item, index) => index + 1, title: "Engineer List"},
     { key: 'user_id', label: 'Id Engineer', sortable: false, searchable: false},
@@ -17,27 +19,11 @@ const columnsEngineer = [
 
 const columnsTask = [
     { key: 'number', label: 'No', sortable: false, searchable: false, render: (item, index) => index + 1, title: "Task List"},
-    { key: 'id', label: 'Id Task', sortable: false, searchable: false},
-    { key: 'task', label: 'Task', sortable: true, searchable: true},
-    { key: 'name', label: 'Nama Engineer', sortable: true, searchable: true},
-    { key: 'nohp', label: 'Nomor Phone', sortable: true, searchable: true},
-    { key: 'email', label: 'Email', sortable: true, searchable: true},
-];
-
-const TipeOptions = [
-    { value: 'INSTALASI', label: 'INSTALASI' },
-    { value: 'MAINTENANCE', label: 'MAINTENANCE' }
-];
-
-const projectOptions = [
-    { value: 'project1', label: 'Project 1' },
-    { value: 'project2', label: 'Project 2' },
-    { value: 'project3', label: 'Project 3' }
-];
-
-const RoleOptions = [
-    { value: 'ENGINEER', label: 'ENGINEER'},
-    { value: 'ADMIN', label: 'ADMIN' }
+    { key: 'task_name', label: 'Task', sortable: true, searchable: true},
+    { key: 'task_type', label: 'Tipe', sortable: true, searchable: true},
+    { key: 'user.name', label: 'Nama Engineer', sortable: true, searchable: true, render: (item) => item.user ? item.user.name : ''},
+    { key: 'user.nohp', label: 'Nomor Phone', sortable: true, searchable: true, render: (item) => item.user ? item.user.nohp : ''},
+    { key: 'user.email', label: 'Email', sortable: true, searchable: true, render: (item) => item.user ? item.user.email : ''},  
 ];
 
 export default function Engineer({response=[]}){
@@ -49,7 +35,7 @@ export default function Engineer({response=[]}){
         role: "ENGINEER"
     })
     const { data: taskData, setData: setTaskData, post: postTask, processing: processingTask, reset: resetTask, errors: taskErrors, clearErrors: clearTaskErrors} = useForm({
-        task_name:"",
+        name:"",
         type:"",
         project:"",
         engineer:""
@@ -59,6 +45,10 @@ export default function Engineer({response=[]}){
    
     const EngineerData = response?.engineers
     const TaskData = response?.tasks
+
+    const engineerSelection = response?.selection?.engineers || []
+    const projectSelection = response?.selection?.projects || []
+
     const [sectionForm, setsectionForm] = useState("")
 
     const handlePhoneChange = (e) => {
@@ -205,6 +195,7 @@ export default function Engineer({response=[]}){
                 </div>
             </div>
 
+            {/* Engineer Form */}
             <div className={`h-full w-full px-2 mt-5 ${FormVisible & sectionForm == 'engineer' ? '': 'hidden'}`}>
                 <div className="flex justify-between ">
                     <button type="button" onClick={toogleSection} className="w-[10%] h-10 rounded-4xl text-xl font-extrabold transform hover:scale-103 transition-all ease-in-out duration-300 tracking-wider bg-black text-white hover:bg-gray-700 ring-4 hover:ring-gray-400/50">Back</button>
@@ -260,6 +251,7 @@ export default function Engineer({response=[]}){
                 </form>
             </div>
 
+            {/* Task Form */}
             <div className={`${FormVisible & sectionForm == 'task'  ? '': 'hidden'}`}>
                 <div className="flex justify-between ">
                     <button type="button" onClick={toogleSection} className="w-[10%] h-10 rounded-4xl text-xl font-extrabold transform hover:scale-103 transition-all ease-in-out duration-300 tracking-wider bg-black text-white hover:bg-gray-700 ring-4 hover:ring-gray-400/50">Back</button>
@@ -274,22 +266,22 @@ export default function Engineer({response=[]}){
                 <form className='mt-10 w-[70%]'>
 
                     <div className="p-2 flex items-center"> 
-                        <label htmlFor="task_name" className="w-55 text-sm font-medium text-gray-700" > Nama Task </label> 
+                        <label htmlFor="taskname" className="w-55 text-sm font-medium text-gray-700" > Nama Task </label> 
                         <div className="flex-1 flex flex-col">
-                            <input type="text" name="task_name" id="task_name" placeholder="Task Name" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={taskData.task_name} onChange={(e) => setTaskData('task_name', e.target.value)}/>
-                            {taskErrors.task_name && <span className="text-red-500 text-sm">{taskErrors.task_name}</span>}
+                            <input type="text" name="taskname" id="taskname" placeholder="Task Name" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={taskData.name} onChange={(e) => setTaskData('name', e.target.value)}/>
+                            {taskErrors.name && <span className="text-red-500 text-sm">{taskErrors.name}</span>}
                         </div>
                     </div>
                     
                     {/* Task Input */}
                     <div className="p-2 flex items-center"> 
-                        <label htmlFor="type" className="w-55 text-sm font-medium text-gray-700" > Tipe Task </label> 
+                        <label htmlFor="tipe" className="w-55 text-sm font-medium text-gray-700" > Tipe Task </label> 
                         <div className="flex-1 flex flex-col">
                             <Select
-                                id="type" name="type" placeholder="Select Task"
-                                value={projectOptions.find(option => option.value === taskData.name)}
-                                onChange={(selectedOption) => setTaskData('type', selectedOption?.value || '')}
-                                options={projectOptions}
+                                id="tipe" name="tipe" placeholder="Select Task"
+                                value={Type.find(option => option.value === taskData.tipe) || null}
+                                onChange={(selectedOption) => setTaskData('tipe', selectedOption?.value || '')}
+                                options={Type}
                                 className="flex-1"
                                 styles={{
                                     control: (base) => ({
@@ -310,9 +302,9 @@ export default function Engineer({response=[]}){
                         <div className="flex-1 flex flex-col">
                             <Select
                                 id="project" name="project" placeholder="Select Project"
-                                value={projectOptions.find(option => option.value === taskData.project)}
+                                value={projectSelection.find(option => option.value === taskData.project) || null}
                                 onChange={(selectedOption) => setTaskData('project', selectedOption?.value || '')}
-                                options={projectOptions}
+                                options={projectSelection}
                                 className="flex-1"
                                 styles={{
                                     control: (base) => ({
@@ -333,9 +325,9 @@ export default function Engineer({response=[]}){
                         <div className="flex-1 flex flex-col">
                             <Select
                                 id="engineer" name="engineer" placeholder="Select Engineer"
-                                value={projectOptions.find(option => option.value === taskData.engineer)}
+                                value={engineerSelection.find(option => option.value === taskData.engineer) || null}
                                 onChange={(selectedOption) => setTaskData('engineer', selectedOption?.value || '')}
-                                options={projectOptions}
+                                options={engineerSelection}
                                 className="flex-1"
                                 styles={{
                                     control: (base) => ({

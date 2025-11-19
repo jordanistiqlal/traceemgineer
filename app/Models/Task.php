@@ -17,4 +17,14 @@ class Task extends Model
             $model->task_id = str_replace("-","",Uuid::uuid4()->toString());
         });
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id', 'project_id');
+    }
 }

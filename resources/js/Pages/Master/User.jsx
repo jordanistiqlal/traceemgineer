@@ -18,6 +18,7 @@ export default function User({response = []}){
         { key: 'name', label: 'Name', sortable: true, searchable: true},
         { key: 'username', label: 'Username', sortable: true, searchable: true},
         { key: 'email', label: 'Email', sortable: true, searchable: true},
+        { key: 'nohp', label: 'No.Handphone', sortable: false, searchable: true},
         { key: 'action', label: 'Action', align: 'center', sortable: false, searchable: false,
             render: (item) => (
                     <div className="flex justify-center gap-2">

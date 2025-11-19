@@ -11,9 +11,10 @@ export default function Task({response = []}){
     const columns = [
         { key: 'number', label: 'No', sortable: false, searchable: false, render: (item, index) => index + 1, title: "Tasks"},
         // { key: 'task_id', label: 'Id', sortable: true, searchable: true},
+        { key: 'task_name', label: 'Nama Task', sortable: true, searchable: true},
         { key: 'task_type', label: 'Tipe', sortable: true, searchable: true},
-        { key: 'project_id', label: 'Project', sortable: true, searchable: true},
-        { key: 'user_id', label: 'Engineer', sortable: true, searchable: true},
+        { key: 'project.project_name', label: 'Project', sortable: true, searchable: true, render: (item) => item.project ? item.project.project_name : ''},
+        { key: 'user.name', label: 'Engineer', sortable: true, searchable: true, render: (item) => item.user ? item.user.name : ''},
         { key: 'action', label: 'Action', align: 'center', sortable: false, searchable: false,
             render: (item) => (
                 <div className="flex justify-center gap-2">
@@ -42,17 +43,15 @@ export default function Task({response = []}){
 
     const {data, setData, post, put, delete: destroy, processing, reset, errors, clearErrors } = useForm({
         id:"",
-        nama_project:"",
+        name:"",
         tipe:"",
+        project:"",
         engineer:"",
-        task:"",
-        task:"",
     })
     const [FormVisible, setFormVisible] = useState(false)
-    const dataResponse = response.data || [];
-    const engineers = response.engineers || [];
-    const projects = response.projects || [];
-
+    const dataResponse = response.data || []
+    const engineers = response.engineers || []
+    const projects = response.projects || []
 
     const ToogleForm = () => {
         reset();
@@ -64,6 +63,7 @@ export default function Task({response = []}){
 
     const handleSubmit = (e) =>{
         e.preventDefault()
+
         handleRequestSubmit(e, data, post, put, reset, 'task', ToogleForm);
     }
 
@@ -73,15 +73,16 @@ export default function Task({response = []}){
 
         const response = (e.currentTarget.dataset.task) ? JSON.parse(e.currentTarget.dataset.task) : null;
         if(!response) return;
+
+        console.log(response);
+        
         
         setData({
             id: response.task_id || "",
-            name: response.name || "",
-            username: response.username || "",
-            email: response.email || "",
-            nohp: response.nohp || "",
-            password: "",
-            role: response.role || ""
+            name: response.task_name || "",
+            tipe: response.task_type || "",
+            project: response.project_id || "",
+            engineer: response.user_id || ""
         });
     }
 
@@ -136,22 +137,31 @@ export default function Task({response = []}){
                         </div>
                     
                     <form onSubmit={handleSubmit} id="form" className="p-4">
-                        <div className="p-2 flex items-center"> 
-                            <label htmlFor="task_name" className="w-55 text-sm font-medium text-gray-700" > Nama Task </label> 
+
+                        <div className="p-2 items-center hidden"> 
+                            <label htmlFor="id" className="w-55 text-sm font-medium text-gray-700" >id</label> 
                             <div className="flex-1 flex flex-col">
-                                <input type="text" name="task_name" id="task_name" placeholder="Task Name" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.task_name} onChange={(e) => setData('task_name', e.target.value)}/>
-                                {errors.task_name && <span className="text-red-500 text-sm">{errors.task_name}</span>}
+                                <input type="text" name="id" id="id" placeholder="id" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.id} onChange={(e) => setData('id', e.target.value)}/>
+                                {errors.id && <span className="text-red-500 text-sm">{errors.id}</span>}
+                            </div>
+                        </div>
+
+                        <div className="p-2 flex items-center"> 
+                            <label htmlFor="name" className="w-55 text-sm font-medium text-gray-700" > Nama Task </label> 
+                            <div className="flex-1 flex flex-col">
+                                <input type="text" name="name" id="name" placeholder="Task Name" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.name} onChange={(e) => setData('name', e.target.value)}/>
+                                {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
                             </div>
                         </div>
                                 
                         {/* Task Input */}
                         <div className="p-2 flex items-center"> 
-                            <label htmlFor="type" className="w-55 text-sm font-medium text-gray-700" > Tipe Task </label> 
+                            <label htmlFor="tipe" className="w-55 text-sm font-medium text-gray-700" > Tipe Task </label> 
                             <div className="flex-1 flex flex-col">
                                 <Select
-                                    id="type" name="type" placeholder="Select Task"
-                                    value={Type.find(option => option.value === data.name)}
-                                    onChange={(selectedOption) => setData('type', selectedOption?.value || '')}
+                                    id="tipe" name="tipe" placeholder="Select Task"
+                                    value={Type.find(option => option.value === data.tipe) || ''}
+                                    onChange={(selectedOption) => setData('tipe', selectedOption?.value || '')}
                                     options={Type}
                                     className="flex-1"
                                     styles={{
@@ -173,7 +183,7 @@ export default function Task({response = []}){
                                 <div className="flex-1 flex flex-col">
                                     <Select
                                         id="project" name="project" placeholder="Select Project"
-                                        value={projects.find(option => option.value === data.project)}
+                                        value={projects.find(option => option.value === data.project) || ''}
                                         onChange={(selectedOption) => setData('project', selectedOption?.value || '')}
                                         options={projects}
                                         className="flex-1"
@@ -196,7 +206,7 @@ export default function Task({response = []}){
                                 <div className="flex-1 flex flex-col">
                                     <Select
                                         id="engineer" name="engineer" placeholder="Select Engineer"
-                                        value={engineers.find(option => option.value === data.engineer)}
+                                        value={engineers.find(option => option.value === data.engineer) || ''}
                                         onChange={(selectedOption) => setData('engineer', selectedOption?.value || '')}
                                         options={engineers}
                                         className="flex-1"

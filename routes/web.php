@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EngineerController;
+use App\Http\Controllers\InstalasiController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TicketController;
@@ -28,7 +29,7 @@ Route::middleware('auth:sanctum','verified')->prefix('')->group(function () {
     
     // Project
     Route::prefix('project')->group(function () {
-        Route::get('/instalasi', function () {return Inertia::render('Project/Instalasi');});
+        Route::resource('/instalasi', InstalasiController::class);
         Route::get('/maintanance', function () {return Inertia::render('Project/Maintanance');});
     });
     

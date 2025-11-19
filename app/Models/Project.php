@@ -17,4 +17,8 @@ class Project extends Model
             $model->project_id = str_replace("-","",Uuid::uuid4()->toString());
         });
     }
+
+    public function task(){
+        return $this->hasMany(Task::class, 'project_id', 'project_id');
+    }
 }

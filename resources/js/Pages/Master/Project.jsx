@@ -45,9 +45,9 @@ export default function Project({response = []}) {
         id:"",
         nama_project:"",
         tipe:"",
-        engineer:"",
-        task:"",
-        ticket:"",
+        // engineer:"",
+        // task:"",
+        // ticket:"",
     })
     const [FormVisible, setFormVisible] = useState(false)
     const dataResponse = response.data || [];

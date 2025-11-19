@@ -1,47 +1,103 @@
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, Link, useForm } from "@inertiajs/react";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Plus from '@/Components/Plus';
 import Table from '@/Components/Table';
 import Select from 'react-select';
-
-const columns = [
-    { key: 'number', label: 'No', sortable: false, searchable: false, render: (item, index) => index + 1, title: "Engineer Data"},
-    { key: 'id', label: 'Id', sortable: false, searchable: true},
-    { key: 'name', label: 'Nama Engineer', sortable: true, searchable: true},
-    { key: 'nohp', label: 'Nomor Phone', sortable: true, searchable: true},
-    { key: 'email', label: 'Email', sortable: true, searchable: true},
-];
-
-const tipeOptions = [
-    { value: 'Tipe1', label: 'Tipe 1' },
-    { value: 'Tipe2', label: 'Tipe 2' },
-    { value: 'Tipe3', label: 'Tipe 3' }
-];
+import Swal from 'sweetalert2';
+import { Type } from '@/Config/typeConfig';
 
 export default function Instalasi({response=[]}){
-    const {data, setData, post, processing, reset, errors, clearErrors } = useForm({ nama:"", tipe:""})
+    const columns = [
+        { key: 'number', label: 'No', sortable: false, searchable: false, render: (item, index) => index + 1, title: "Engineer Data"},
+        { key: 'task_name', label: 'Nama Engineer', sortable: true, searchable: true, render: (item) => item.task_name || '-' },
+        { key: 'user.name', label: 'Nama Engineer', sortable: true, searchable: true, render: (item) => item.user?.name || '-' },
+        { key: 'user.nohp', label: 'Nomor Phone', sortable: true, searchable: true, render: (item) => item.user?.nohp || '-' },
+        { key: 'user.email', label: 'Email', sortable: true, searchable: true, render: (item) => item.user?.email || '-' },
+    ];
+    const {data, setData, post, processing, reset, errors, clearErrors } = useForm({ nama_project:"", tipe:""})
     const [projectTitle, setprojectTitle] = useState("")
-
     const [FormVisible, setFormVisible] = useState(true)
+
     const toogleSection = () => {
         reset()
         if(FormVisible){return setFormVisible(false)}
         return setFormVisible(true)
     }
+    const projectData = response.projects || []
+    const [detailProjectData, setdetailProjectData] = useState([])
 
     const ProjectShow = (e) => {
         e.preventDefault()
         setFormVisible(true)
-
-        setprojectTitle(e.currentTarget.dataset.project)
+        setprojectTitle(e.currentTarget.dataset.title)
+        showDetail(e.currentTarget.dataset.id)
     }
 
-    
+    const showDetail = async (id) => {
+        try {
+            const res = await fetch(route('project.show', id));
+            if (!res.ok) throw await res.text();
+
+            const data = await res.json();
+            
+            setdetailProjectData(data.task);
+
+        } catch (error) {
+            Swal.fire({
+                text: error || 'Something went wrong',
+                icon: "error",
+                title: "Oops...",
+                confirmButtonText: 'Close'
+            });
+        }
+    };
+
 
     const handleSubmit = (e) =>{
         e.preventDefault()
+
+        try {
+            post(route('project.store'), {
+                onSuccess: () =>{
+                    Swal.fire({
+                        title: "Created Succesfully",
+                        icon: "success",
+                        draggable: true
+                    });
+
+                    reset()
+                },
+                onError: (errors) =>{
+                    const errorMessages = typeof errors != 'object' ? errors : Object.values(errors).flat().join('\n');
+                    
+                    Swal.fire({
+                        text: errorMessages,
+                        icon: "error",
+                        title: "Oops...",
+                        confirmButtonText: 'Close'
+                    })
+                }
+            })
+        } catch (error) {
+            Swal.fire({
+                text: error,
+                icon: "error",
+                title: "Oops...",
+            })
+        }
     }
+
+    useEffect(() =>{
+        const hasErrors = Object.keys(errors).length > 0;
+        
+        if(hasErrors){
+            setTimeout(() => {
+                clearErrors();
+            }, 5000);
+        }
+        
+    }, [errors])
 
     return(
         <>
@@ -50,9 +106,9 @@ export default function Instalasi({response=[]}){
             <div className="grid grid-cols-4">
                 <div className="">
                     <div className="flex flex-col flex-1 gap-2 mb-5 p-3 max-h-max h-[45vh] overflow-y-auto scrollbar-hide">
-                        {["Project 1","Project 2","Project 3"].map((item,i) => (
-                            <Link key={i} data-project={item} className="bg-[#9AB78F] rounded-2xl px-6 py-3 w-full uppercase text-md font-bold text-white hover:bg-[#8BA67E] ring-4 hover:ring-green-100/50" onClick={ProjectShow}>
-                                Project {i+1}
+                        {projectData.map((item,i) => (
+                            <Link key={i} data-title={item.project_name} data-id={item.project_id} className="bg-[#9AB78F] rounded-2xl px-6 py-3 w-full uppercase text-md font-bold text-white hover:bg-[#8BA67E] ring-4 hover:ring-green-100/50" onClick={ProjectShow}>
+                                {item.project_name}
                             </Link>
                         ))}
                     </div>
@@ -68,7 +124,7 @@ export default function Instalasi({response=[]}){
                     <div className={`${FormVisible && projectTitle != "" ? '' : 'hidden'} `}>
                         <h1 className='text-4xl font-bold mb-5'>{projectTitle}</h1>
                         <Table 
-                            data={response || []}
+                            data={detailProjectData}
                             columns={columns}
                             search={true}
                             sort={true}
@@ -85,10 +141,10 @@ export default function Instalasi({response=[]}){
                         <form className='w-full'>
 
                             <div className="p-2 flex items-center"> 
-                                <label htmlFor="name" className="w-55 text-sm font-medium text-gray-700" >Nama</label> 
+                                <label htmlFor="nama_project" className="w-55 text-sm font-medium text-gray-700" >Nama</label> 
                                 <div className="flex-1 flex flex-col">
-                                    <input type="text" name="name" id="name" placeholder="Project Name" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"/>
-                                    {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
+                                    <input type="text" name="nama_project" id="nama_project" placeholder="Project Name" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value={data.nama_project} onChange={(e) => setData('nama_project', e.target.value)}/>
+                                    {errors.nama_project && <span className="text-red-500 text-sm">{errors.nama_project}</span>}
                                 </div>
                             </div>
 
@@ -97,10 +153,10 @@ export default function Instalasi({response=[]}){
                                 <div className="flex-1 flex flex-col">
                                     {/* <input type="text" name="tipe" id="tipe" placeholder="Tipe" className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"/> */}
                                     <Select
-                                        id="name" name="name" placeholder="Select Tipe"
-                                        value={tipeOptions.find(option => option.value === data.name)}
-                                        onChange={(selectedOption) => setData('name', selectedOption?.value || '')}
-                                        options={tipeOptions}
+                                        id="tipe" name="tipe" placeholder="Select Tipe"
+                                        value={Type.find(option => option.value === data.tipe) || null}
+                                        onChange={(selectedOption) => setData('tipe', selectedOption?.value || '')}
+                                        options={Type}
                                         className="flex-1"
                                         styles={{
                                             control: (base) => ({
