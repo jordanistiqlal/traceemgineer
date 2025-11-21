@@ -9,7 +9,7 @@ import Select from 'react-select';
 export default function Ticket({response = []}){
     const columns = [
         { key: 'number', label: 'No', sortable: false, searchable: false, render: (item, index) => index + 1, title: "Tickets"},
-        { key: 'project.project_name', label: 'Site', sortable: true, searchable: true, render: (item) => item.project ? item.project.project_name : ''},
+        { key: 'project.project_name', label: 'Project', sortable: true, searchable: true, render: (item) => item.project ? item.project.project_name : ''},
         { key: 'ticket_site', label: 'Site', sortable: true, searchable: true},
         { key: 'ticket_tanggal', label: 'Tanggal', sortable: true, searchable: true},
         { key: 'ticket_problem', label: 'Problem', sortable: true, searchable: true},

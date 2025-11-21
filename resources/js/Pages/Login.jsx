@@ -15,13 +15,13 @@ export default function Login({errors}){
         try {            
             post(route('login.post'), {
                 onSuccess: () =>{
-                    // Swal.fire({
-                    //     title: "Login Succesfully",
-                    //     icon: "success",
-                    //     draggable: true
-                    // });
+                    Swal.fire({
+                        title: "Login Succesfully",
+                        icon: "success",
+                        draggable: true
+                    });
 
-                    // reset('password')
+                    reset('password')
                 },
                 onError: (errors) =>{
                     const errorMessages = typeof errors != 'object' ? errors : Object.values(errors).flat().join('\n');

@@ -141,7 +141,23 @@ class UserService
         }
     }
 
-    public function projectsUser($id){
-        return User::with(['task'])->where('user_id', $id)->get();
+    public function projectsUser($request){
+        return User::with([
+            'task:task_id,project_id,user_id',
+            'task.project:project_id,project_name,project_type',
+            'task.project.ticket:ticket_id,project_id,ticket_site,ticket_tanggal,ticket_jam,ticket_from,ticket_problem,bodyraw',
+        ])
+        ->select('user_id', 'name')
+        ->where('user_id', auth('api')->id())->first();
+    }
+
+    public function TicketUser($id){
+        return User::with([
+            'task:task_id,project_id,user_id',
+            'task.project:project_id,project_name,project_type',
+            'task.project.ticket:ticket_id,project_id,ticket_site,ticket_tanggal,ticket_jam,ticket_from,ticket_problem,bodyraw',
+        ])
+        ->select('user_id','name')
+        ->where('user_id', $id)->first();
     }
 }

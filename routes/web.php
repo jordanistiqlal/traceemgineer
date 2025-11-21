@@ -42,6 +42,8 @@ Route::middleware('auth')->prefix('')->group(function () {
         Route::resource('/ticket', TicketController::class);
         Route::resource('/task', TaskController::class);
     });
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 // API Routes
@@ -51,7 +53,13 @@ Route::prefix('api')->group(function () {
 
     Route::middleware('auth:api')->group(function () {
         Route::get('/user-profile', [ApiController::class, 'user_profile']);
-        Route::get('/projects/{id}', [ApiController::class, 'projects']);
+        Route::get('/projects', [ApiController::class, 'projects']);
+        // Route::get('/tickets/{id}', [ApiController::class, 'tickets']);
+
+        Route::post('/start-tracking', [ApiController::class, 'start_track']);
+        Route::post('/stop-tracking', [ApiController::class, 'stop_track']);
+
+        Route::post('/location', [ApiController::class, 'track_log']);
 
         Route::post('/logout', [AuthController::class, 'logout_api']);
     });

@@ -19,6 +19,9 @@ return new class extends Migration
             // $table->string('project_id')->nullable();
             // $table->string('user_id')->nullable();
 
+            $table->dateTime('start_time')->nullable();
+            $table->dateTime('end_time')->nullable();
+
             $table->timestamps();
         });
     }

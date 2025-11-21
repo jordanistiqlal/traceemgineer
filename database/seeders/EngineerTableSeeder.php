@@ -19,7 +19,7 @@ class EngineerTableSeeder extends Seeder
             [
                 'user_id' => 'ENGKIE07',
                 'name' => 'John Doe',
-                'username' => 'jogndoe',
+                'username' => 'johndoe',
                 'role' => 'ENGINEER',
                 'email' => 'jogndoe@admin.com',
                 'nohp' => '0000-0001-0001',

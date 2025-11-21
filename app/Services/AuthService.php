@@ -6,11 +6,9 @@ use App\Models\RefreshToken;
 use App\Models\User;
 use Exception;
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -101,11 +99,13 @@ class AuthService
 
     public function logout($request)
     {
-        $token = $request->user()->currentAccessToken()->delete();
+        // $request->user()->currentAccessToken()->delete();
+        
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-        return [
-            'message' => 'You have successfully logged out'
-        ];
+        return ['Success', 'You have successfully logged out'];
     }
 
     public function api_login($request)
@@ -120,11 +120,17 @@ class AuthService
             $user = User::where('username', $request->username)->first();
 
             if (!$user) {
-                throw new \Exception('User Not Found');
+                return response()->json([
+                    'status' => 'Error',
+                    'message' => 'User not Found!'
+                ], 404);
             }
 
             if (!Hash::check($request->password, $user->password)) {
-                throw new \Exception('Invalid Credentials');
+                 return response()->json([
+                    'status' => 'Error',
+                    'message' => 'Invalid Credentials'
+                ], 404);
             }
 
             $accessToken = $this->generate_access_token($user);
@@ -214,7 +220,11 @@ class AuthService
                 ->first();
 
             if (!$refreshToken) {
-                throw new \Exception('Invalid or Expired Refresh Token');
+                return response()->json([
+                    'status' => 'Error',
+                    'message' => 'Invalid or Expired Refresh Token'
+                ], 404);
+                // throw new \Exception('Invalid or Expired Refresh Token');
             }
 
             $user = User::find($refreshToken->user_id);
