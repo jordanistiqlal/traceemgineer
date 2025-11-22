@@ -3,10 +3,17 @@ import { DataProvider } from '@/Contexts/DataContext';
 import Sidebar from "../Components/Sidebar";
 import Header from "../Components/Header";
 import { usePage } from "@inertiajs/react";
+import Redirect from "@/Pages/Redirect";
 
 export default function MainLayout({children, sidebarData }){
-    const { url } = usePage();
+    const { url, props } = usePage();
     
+    if (props.auth.user.role !== "ADMIN") {
+        return (
+            <Redirect></Redirect>
+        )
+    }
+
     return (
         <DataProvider initialData={sidebarData?.[0]}>
             <div className="flex h-screen relative">

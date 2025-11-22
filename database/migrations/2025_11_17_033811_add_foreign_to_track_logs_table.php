@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::table('track_logs', function (Blueprint $table) {
             $table->foreignUuid('user_id')->nullable()->references('user_id')->on('users')->nullOnDelete();
             $table->foreignUuid('project_id')->nullable()->references('project_id')->on('projects')->nullOnDelete();
+            $table->foreignUuid('ticket_id')->nullable()->references('ticket_id')->on('tickets')->nullOnDelete();
+            $table->foreignUuid('task_id')->nullable()->references('task_id')->on('tasks')->nullOnDelete();
         });
     }
 
@@ -25,6 +27,8 @@ return new class extends Migration
         Schema::table('track_logs', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
             $table->dropForeign(['project_id']);
+            $table->dropForeign(['ticket_id']);
+            $table->dropForeign(['task_id']);
         });
 
     }

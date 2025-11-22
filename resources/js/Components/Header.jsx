@@ -18,7 +18,7 @@ export default function Header({data}){
             text: "You won't be able to revert this!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#9AB78F',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
@@ -53,7 +53,9 @@ export default function Header({data}){
 
                     {/* Icon */}
                     <div className="px-11 lg:w-[25%] md:w-[40%]">
-                        <img className="h-[77px] w-[100px]" src={Logo} alt="Logo" />
+                        <Link href={'/'} className="cursor-pointer">
+                            <img className="h-[77px] w-[100px]" src={Logo} alt="Logo" />
+                        </Link>
                     </div>
                     
                     {/* Menu Section */}

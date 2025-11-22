@@ -4,9 +4,7 @@ namespace App\Services;
 
 use App\Models\Project;
 use App\Models\Ticket;
-use Carbon\Carbon;
 use Exception;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -149,34 +147,5 @@ class TicketService
             DB::rollBack();
             return ['Failed', $error->getMessage()];
         }
-    }
-
-    public function start_ticket($request){
-        DB::beginTransaction();
-        try {
-            // update start colom di ticket
-            $now = Carbon::now();
-
-            $update_time = [
-                'start_time' => $now
-            ];
-
-            Ticket::where('ticket_id',$request->ticket_id)->update($update_time);
-
-            // mulai new data track (kyknya data track dipisah aja karena ntar ada api yg di tembak 5 menit sekali ke track)
-
-            DB::commit();
-            return ['Success', 'Tickets Start'];
-        } catch (ValidationException $e) {
-            DB::rollBack();
-            return ['Validation Error', $e->errors()];
-        } catch (Exception $error) {
-            DB::rollBack();
-            return ['Failed', $error->getMessage()];
-        }
-    }
-
-    public function stop_ticket($request){
-        
     }
 }

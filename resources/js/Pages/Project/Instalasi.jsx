@@ -107,7 +107,7 @@ export default function Instalasi({response=[]}){
                 <div className="">
                     <div className="flex flex-col flex-1 gap-2 mb-5 p-3 max-h-max h-[45vh] overflow-y-auto scrollbar-hide">
                         {projectData.map((item,i) => (
-                            <Link key={i} data-title={(item.project_name).toUpperCase()+' | '+item.project_type} data-id={item.project_id} className="bg-[#9AB78F] rounded-2xl px-6 py-3 w-full uppercase text-md font-bold text-white hover:bg-[#8BA67E] ring-4 hover:ring-green-100/50" onClick={ProjectShow}>
+                            <Link key={i} data-title={(item.project_name).toUpperCase()} data-id={item.project_id} className="bg-[#9AB78F] rounded-2xl px-6 py-3 w-full uppercase text-md font-bold text-white hover:bg-[#8BA67E] ring-4 hover:ring-green-100/50" onClick={ProjectShow}>
                                 {item.project_name}
                             </Link>
                         ))}

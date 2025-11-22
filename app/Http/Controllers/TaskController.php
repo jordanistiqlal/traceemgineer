@@ -36,7 +36,7 @@ class TaskController extends Controller
 
         $project = $this->ProjectService->index($request);
         $projects = $project->map(function ($item) {
-            return ['value' => $item->project_id, 'label' => $item->project_name];
+            return ['value' => $item->project_id, 'label' => $item->project_name, 'type'=> $item->project_type];
         });
 
         return Inertia::render('Master/Task', [

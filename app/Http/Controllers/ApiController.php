@@ -49,7 +49,8 @@ class ApiController extends Controller
 
     public function projects(Request $request)
     {
-        $response = $this->UserService->projectsUser($request);
+        $userId = auth('api')->id();
+        $response = $this->UserService->projectsUser($userId);
 
         if (!$response) {
             return response()->json([
@@ -58,71 +59,59 @@ class ApiController extends Controller
                 'data' => []
             ], 404);
         }
-
-        $projects = collect($response->task)->pluck('project')->filter()->unique('project_id')->values();
 
         return response()->json([
             'status'  => 'Success',
             'message' => 'Projects Retrieved',
             'data'    => $response,
-        ]);
-    }
-
-    public function tickets($id)
-    {
-        $response = $this->UserService->TicketUser($id);
-
-        if (!$response) {
-            return response()->json([
-                'status' => 'Error',
-                'message' => 'User not found',
-                'data' => []
-            ], 404);
-        }
-
-        $projects = collect($response->task)->pluck('project')->filter()->values();
-        $tickets = $projects->pluck('ticket')->flatten(1)->unique('ticket_id')->values();
-
-        return response()->json([
-            'status' => 'Success',
-            'message'=> 'Tickets Retrieved',
-            'data' => $tickets,
-        ]);
+        ], 200);
     }
 
     public function start_track(Request $request){
-        $result = $this->TicketService->start_ticket($request);
-        
+        $result = $this->ProjectService->start_ticket($request);
+
         if ($result[0] === 'Success') {
             return response()->json([
                 'status' => 'Success',
                 'message'=> $result[1],
-            ]);
+            ], 200);
         }
 
         return response()->json([
             'status' => 'Failed',
             'message'=> $result[1],
-        ]);
+        ], 500);
     }
 
     public function stop_track(Request $request){
-        $result = $this->TicketService->stop_ticket($request);
+        $result = $this->ProjectService->stop_ticket($request);
         
         if ($result[0] === 'Success') {
             return response()->json([
                 'status' => 'Success',
                 'message'=> $result[1],
-            ]);
+            ], 200);
         }
 
         return response()->json([
             'status' => 'Failed',
             'message'=> $result[1],
-        ]);
+        ], 500);
     }
 
     public function track_log(Request $request){
+        $result = $this->ProjectService->track_log($request);
 
+        if ($result[0] === 'Success') {
+            return response()->json([
+                'status' => 'Success',
+                'message'=> $result[1],
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 'Failed',
+            'message'=> $result[1],
+        ], 500);
     }
 }

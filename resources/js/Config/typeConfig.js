@@ -1,4 +1,4 @@
 export const Type = [
     { value: "INSTALASI", label: "INSTALASI" },
-    { value: "MAINTANANCE", label: "MAINTANANCE" },
+    { value: "MAINTENANCE", label: "MAINTENANCE" },
 ]

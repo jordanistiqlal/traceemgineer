@@ -46,6 +46,10 @@ Route::middleware('auth')->prefix('')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
+Route::fallback(function () {
+    return Inertia::render('404');
+});
+
 // API Routes
 Route::prefix('api')->group(function () {
     Route::post('/login', [AuthController::class, 'jwt_login']);

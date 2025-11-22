@@ -20,6 +20,7 @@ class MaintananceController extends Controller
     
     public function index(Request $request): Response
     {
+        $request['project_type'] = 'MAINTENANCE';
         $project = $this->ProjectService->index($request);
         $projects = $project->map(function ($item) {
             return ['value' => $item->project_id, 'label' => $item->project_name];

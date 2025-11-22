@@ -22,7 +22,7 @@ class TicketTableSeeder extends Seeder
                 'ticket_jam' => '00.00',
                 'ticket_from' => 'ADMKIE07',
                 'bodyraw' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-                'project_id' => '38961e2e-a32c-4eee-9cb3-2dda2a1e1664',
+                'project_id' => '10433c2a-b600-4efb-9171-3362a784092e',
             ],
             [
                 'ticket_id' => 'eda162c0-fe41-45f0-8768-80a5d5221086',
@@ -32,7 +32,7 @@ class TicketTableSeeder extends Seeder
                 'ticket_jam' => '00.00',
                 'ticket_from' => 'ADMKIE07',
                 'bodyraw' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-                'project_id' => '38961e2e-a32c-4eee-9cb3-2dda2a1e1664',
+                'project_id' => '10433c2a-b600-4efb-9171-3362a784092e',
             ],
             [
                 'ticket_id' => 'd70b634b-7385-4b03-9f7f-994759c26650',
@@ -42,7 +42,7 @@ class TicketTableSeeder extends Seeder
                 'ticket_jam' => '00.00',
                 'ticket_from' => 'ADMKIE07',
                 'bodyraw' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-                'project_id' => 'ad30fc4e-f3df-4949-9672-5761a2e1dd61',
+                'project_id' => '10433c2a-b600-4efb-9171-3362a784092e',
             ],
         ]);
     }

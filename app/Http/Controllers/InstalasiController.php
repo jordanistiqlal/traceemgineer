@@ -20,9 +20,11 @@ class InstalasiController extends Controller
 
     public function index(Request $request): Response
     {
+        // $request['project_type'] = 'INSTALASI';
+        $project = $this->ProjectService->index($request);
         return Inertia::render('Project/Instalasi', [
             'response' => [
-                'projects' => $this->ProjectService->index(new Request(['status' => 'INSTALASI'])),
+                'projects' => $project
             ],
         ]);
     }

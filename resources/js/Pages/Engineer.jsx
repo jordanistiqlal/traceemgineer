@@ -23,7 +23,14 @@ const columnsTask = [
     { key: 'task_type', label: 'Tipe', sortable: true, searchable: true},
     { key: 'user.name', label: 'Nama Engineer', sortable: true, searchable: true, render: (item) => item.user ? item.user.name : ''},
     { key: 'user.nohp', label: 'Nomor Phone', sortable: true, searchable: true, render: (item) => item.user ? item.user.nohp : ''},
-    { key: 'user.email', label: 'Email', sortable: true, searchable: true, render: (item) => item.user ? item.user.email : ''},  
+    { key: 'user.email', label: 'Email', sortable: true, searchable: true, render: (item) => item.user ? item.user.email : ''},
+    { key: 'start_time', label: 'Status', sortable: true, searchable: true, render: (item) => 
+        item.start_time 
+            ? <p className='text-green-500 font-bold'>Task is Work</p>
+                : item.end_time 
+                    ? <p className='text-green-500 font-bold'>Done</p>
+                        : <p className='text-red-500'>Not Started Yet</p>
+    },
 ];
 
 export default function Engineer({response=[]}){
@@ -46,6 +53,9 @@ export default function Engineer({response=[]}){
     const EngineerData = response?.engineers
     const TaskData = response?.tasks
 
+    console.log(TaskData);
+    
+
     const engineerSelection = response?.selection?.engineers || []
     const projectSelection = response?.selection?.projects || []
 
@@ -58,6 +68,7 @@ export default function Engineer({response=[]}){
 
     const toogleSection = () => {
         reset()
+        resetTask()
         if(FormVisible){
             return setFormVisible(false)
         }
@@ -283,6 +294,7 @@ export default function Engineer({response=[]}){
                                 onChange={(selectedOption) => setTaskData('tipe', selectedOption?.value || '')}
                                 options={Type}
                                 className="flex-1"
+                                isDisabled={true}
                                 styles={{
                                     control: (base) => ({
                                         ...base,
@@ -303,7 +315,10 @@ export default function Engineer({response=[]}){
                             <Select
                                 id="project" name="project" placeholder="Select Project"
                                 value={projectSelection.find(option => option.value === taskData.project) || null}
-                                onChange={(selectedOption) => setTaskData('project', selectedOption?.value || '')}
+                                onChange={(selectedOption) => {
+                                    setTaskData('project', selectedOption?.value || '')
+                                    setTaskData('tipe', selectedOption?.type || '')
+                                }}
                                 options={projectSelection}
                                 className="flex-1"
                                 styles={{
