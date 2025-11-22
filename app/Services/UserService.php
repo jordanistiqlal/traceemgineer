@@ -186,30 +186,20 @@ class UserService
                     'project_name' => $project->project_name
                 ];
 
-                // penambahan task/ticket ke project MAINTENANCE
-                if($projectType === "MAINTENANCE"){
-                    // $projectMap[$projectType][$projectId]['ticket'] = $project->ticket ?? [];
-                    
-                    $tickets = $project->ticket ?? [];
-                    if($tickets){
-                        foreach($tickets as $ticket){
-                            $projectMap[$projectType][$projectId]['ticket'][] = [
-                                'ticket_id' => $ticket->ticket_id,
-                                'project_id' => $ticket->project_id,
-                                'ticket_site' => $ticket->ticket_site,
-                                'ticket_tanggal' => $ticket->ticket_tanggal,
-                                'ticket_problem' => $ticket->ticket_problem,
-                                'bodyraw' => $ticket->bodyraw,
-                                'is_work' => $ticket->start_time ? true : false
-                            ];
-                        }
-                    }else{
-                        $projectMap[$projectType][$projectId]['ticket'] = [];
-                    }
-
-                }else{
-                    $projectMap[$projectType][$projectId]['task'] = [];
+                $tickets = $project->ticket ?? [];
+                foreach($tickets as $ticket){
+                    $projectMap[$projectType][$projectId]['ticket'][] = [
+                        'ticket_id' => $ticket->ticket_id,
+                        'project_id' => $ticket->project_id,
+                        'ticket_site' => $ticket->ticket_site,
+                        'ticket_tanggal' => $ticket->ticket_tanggal,
+                        'ticket_problem' => $ticket->ticket_problem,
+                        'bodyraw' => $ticket->bodyraw,
+                        'is_work' => $ticket->start_time ? true : false
+                    ];
                 }
+                
+                $projectMap[$projectType][$projectId]['task'] = [];
             }
 
             // penambahan task non-MAINTENANCE ke dalam project
@@ -219,17 +209,12 @@ class UserService
                 'project_id' => $task->project_id,
                 'task_name' => $task->task_name,
                 'is_work' => $task->start_time ? true : false,
-                // 'start_time' => $task->start_time,
-                // 'end_time' => $task->end_time,
             ] ?? [];
         }
 
         // penyesuaian struktur
         foreach($projectMap as $type => $projects){
-            $groupedProjects[] = [
-                'type' => $type,
-                'projects' => array_values($projects),
-            ];
+            $groupedProjects[] = array_values($projects);
         }
 
         return $groupedProjects;

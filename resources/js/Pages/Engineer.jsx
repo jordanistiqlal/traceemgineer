@@ -53,9 +53,6 @@ export default function Engineer({response=[]}){
     const EngineerData = response?.engineers
     const TaskData = response?.tasks
 
-    console.log(TaskData);
-    
-
     const engineerSelection = response?.selection?.engineers || []
     const projectSelection = response?.selection?.projects || []
 
